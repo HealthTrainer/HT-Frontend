@@ -46,28 +46,19 @@ const SignUpScreen2 = () => {
   const image = useSelector(state => state.profileImage.image);
   const dispatch = useDispatch();
 
-  const mounted = useRef();
+  useEffect(() => {
+    dispatch(setImage(image));
+  }, [image, dispatch]);
 
   useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-    } else {
-      if (!loading && !response && !error) {
-        dispatch(requestSignUp(signUpState));
-      } else if (loading) {
-        console.log(loading);
-      } else if (error) {
-        console.log(error);
-      } else if (response.data.result === 'FAIL') {
-        console.log(signUpState);
-        console.log('실패');
-      } else {
-        console.log(response);
-        console.log(response.data);
-        navigation.navigate('MainBottomTab');
-      }
+    // console.log('In useEffect (config):', response.config.data);
+    // console.log('In useEffect (file):', response.config.data._parts);
+    // console.log('In useEffect (result):', response.data);
+    if (response?.data.result === 'SUCCESS') {
+      console.log('성공');
+      navigation.navigate('SplashStack');
     }
-  }, [signUpState, dispatch, navigation, loading, response, error]);
+  }, [response, navigation]);
 
   const NAMEERROR = '이름을 입력해주세요.';
   const AGEERROR = '나이를 입력해주세요.';

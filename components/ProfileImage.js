@@ -17,15 +17,15 @@ const ProfileImage = ({ style }) => {
         mediaType: 'photo',
         maxWidth: 512,
         maxHeight: 512,
-        includeBase64: Platform.OS === 'android',
+        //includeBase64: Platform.OS === 'android',
       },
       res => {
         if (res.didCancel) {
           return;
         }
         setResponse(res);
-        console.log(res);
-        dispatch(setImage(res.assets[0].base64));
+        //console.log(res.assets[0]);
+        dispatch(setImage(res.assets[0]));
       },
     );
   };
