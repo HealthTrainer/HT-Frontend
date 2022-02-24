@@ -1,74 +1,137 @@
 import React, { useEffect, useState } from 'react';
-import { Button, ScrollView } from 'react-native';
-import CustomCalendar from '../components/Calendar';
+import { View, ScrollView, Text } from 'react-native';
+import Calendar from '../components/Calendar';
 import TodoList from '../components/TodoList';
 import { StyleSheet } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { setCalendar } from '../redux_modules/calendar';
 import AddButton from '../components/AddButton';
-import _ from 'lodash';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getWorkout, getWorkoutList } from '../lib/workoutAPI';
+import AddWorkoutModal from '../components/AddWorkoutModal';
 
-const workoutList = [
-  {
-    date: '2022-02-02',
-    workout: [
-      { name: '팔굽혀펴기', part: '상체', count: '10', set: '2', time: 0 },
-    ],
-    color: null,
+const _calendar = {
+  '2022-02-02': {
+    1: {
+      name: '팔굽혀펴기',
+      part: '상체',
+      count: '10',
+      set: '2',
+      time: 0,
+      done: false,
+    },
+    2: {
+      name: '덤벨프레스',
+      part: '상체',
+      count: '15',
+      set: '4',
+      time: 0,
+      done: false,
+    },
   },
-  {
-    date: '2022-02-03',
-    workout: [
-      { name: '팔굽혀펴기', part: '상체', count: '10', set: '2', time: 0 },
-      { name: '덤벨프레스', part: '상체', count: '15', set: '4', time: 0 },
-    ],
-    color: null,
+  '2022-02-03': {
+    1: {
+      name: '팔굽혀펴기',
+      part: '상체',
+      count: '10',
+      set: '2',
+      time: 0,
+      done: false,
+    },
+    2: {
+      name: '덤벨프레스',
+      part: '상체',
+      count: '15',
+      set: '4',
+      time: 0,
+      done: false,
+    },
+    3: {
+      name: '스쿼트',
+      part: '하체',
+      count: '20',
+      set: '3',
+      time: 0,
+      done: false,
+    },
   },
-  {
-    date: '2022-02-04',
-    workout: [
-      { name: '팔굽혀펴기', part: '상체', count: '10', set: '2', time: 0 },
-      { name: '덤벨프레스', part: '상체', count: '15', set: '4', time: 0 },
-      { name: '스쿼트', part: '하체', count: '20', set: '3', time: 0 },
-    ],
-    color: null,
+  '2022-02-04': {
+    1: {
+      name: '팔굽혀펴기',
+      part: '상체',
+      count: '10',
+      set: '2',
+      time: 0,
+      done: false,
+    },
+    2: {
+      name: '덤벨프레스',
+      part: '상체',
+      count: '15',
+      set: '4',
+      time: 0,
+      done: false,
+    },
+    3: {
+      name: '스쿼트',
+      part: '하체',
+      count: '20',
+      set: '3',
+      time: 0,
+      done: false,
+    },
+    4: {
+      name: '스쿼트',
+      part: '하체',
+      count: '20',
+      set: '3',
+      time: 0,
+      done: false,
+    },
   },
-];
+};
 
 const CalendarScreen = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [calendar, setCalendar] = useState(null);
   const [workout, setWorkout] = useState(null);
 
-  const dispatch = useDispatch();
-  const selectedDate = useSelector(state => state.date.date);
-  const calendar = useSelector(state => state.calendar.calendar);
-
   useEffect(() => {
-    dispatch(setCalendar(workoutList));
-  }, [dispatch]);
-
-  useEffect(() => {
-    const searchWorkout = date => {
-      for (let i = 0; i < calendar?.length; i++) {
-        if (calendar[i].date === date) {
-          return _.cloneDeep(calendar[i]).workout;
-        }
+    //AsyncStorage.setItem('calendar', JSON.stringify(_calendar));
+    AsyncStorage.getItem('calendar', (err, result) => {
+      if (err) {
+        console.log('AsyncStorage Error:', err);
+      } else {
+        setCalendar(JSON.parse(result));
       }
-      return null;
-    };
+    });
+  }, []);
 
-    setWorkout(searchWorkout(selectedDate));
-  }, [selectedDate, calendar]);
+  const onPressAddButton = async () => {
+    setIsVisible(true);
+    const response = await getWorkout(32, 'list1');
+    console.log(response.data);
+  };
 
-  const onPress = () => {
-    console.log(workout);
+  const changeDay = day => {
+    const date = day.dateString;
+    setWorkout(calendar[date]);
+  };
+
+  const onBackdropPress = () => {
+    setIsVisible(false);
   };
 
   return (
     <>
-      <CustomCalendar />
+      <AddWorkoutModal
+        isVisible={isVisible}
+        onBackdropPress={onBackdropPress}
+      />
+      <View style={styles.block}>
+        <Calendar onDayPress={changeDay} />
+      </View>
       <ScrollView contentContainerStyle={styles.container}>
-        <TodoList workout={workout} setWorkout={setWorkout} />
-        <AddButton onPress={onPress} />
+        <TodoList workout={workout} />
+        <AddButton onPress={onPressAddButton} />
       </ScrollView>
     </>
   );
@@ -76,6 +139,13 @@ const CalendarScreen = () => {
 
 const styles = StyleSheet.create({
   container: { paddingTop: 10, alignItems: 'center' },
+  block: {
+    marginHorizontal: 10,
+    marginTop: 10,
+    borderWidth: 3,
+    borderRadius: 10,
+    borderColor: 'white',
+  },
 });
 
 export default CalendarScreen;

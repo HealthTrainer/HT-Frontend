@@ -32,7 +32,7 @@ const requestSignIn = async () => {
 };
 
 const requestProfile = async () => {
-  const response = await myAxios.get('/users/1/profile');
+  const response = await myAxios.get('/users/32/profile');
   console.log(response.data);
 };
 

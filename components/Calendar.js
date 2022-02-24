@@ -1,17 +1,9 @@
 import React from 'react';
-import { Calendar } from 'react-native-calendars';
-import { useDispatch } from 'react-redux';
-import { setDate } from '../redux_modules/date';
+import { Calendar as RNCalendar } from 'react-native-calendars';
 
-const CustomCalendar = () => {
-  const dispatch = useDispatch();
-
-  const onDayPress = day => {
-    dispatch(setDate(day.dateString));
-  };
-
+const Calendar = ({ onDayPress }) => {
   return (
-    <Calendar
+    <RNCalendar
       onDayPress={onDayPress}
       onPressArrowLeft={subtractMonth => subtractMonth()}
       onPressArrowRight={addMonth => addMonth()}
@@ -19,4 +11,4 @@ const CustomCalendar = () => {
   );
 };
 
-export default CustomCalendar;
+export default Calendar;
