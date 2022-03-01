@@ -1,26 +1,24 @@
 import React from 'react';
 import Modal from 'react-native-modal';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
 
-const AddWorkoutModal = ({
+const ShowWorkoutModal = ({
   isVisible,
   onBackdropPress,
-  workoutList,
+  workoutItems,
   onPress,
 }) => {
   return (
     <Modal isVisible={isVisible} onBackdropPress={onBackdropPress}>
       <View style={styles.modal}>
-        <Text style={styles.titleText}>운동루틴을 선택해주세요</Text>
-        {workoutList?.map((item, index) => (
+        <Text style={styles.titleText}>운동을 선택해주세요</Text>
+        {workoutItems?.map((item, index) => (
           <Pressable
-            key={item.id}
+            key={item.exerciseHistoryId}
             style={styles.block}
-            onPress={() => {
-              onPress(item.title);
-            }}>
-            <Text key={item.id} style={styles.itemText}>
-              {item.title}
+            onPress={() => onPress(item.name)}>
+            <Text style={styles.itemText} key={item.id}>
+              {item.name}
             </Text>
           </Pressable>
         ))}
@@ -61,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddWorkoutModal;
+export default ShowWorkoutModal;
